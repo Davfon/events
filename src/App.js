@@ -1,57 +1,128 @@
 import './App.css';
+import React, { useEffect } from 'react';
+import Praise from './praise.jpg';
 
 function App() {
-  const handleClick = async () => {
-    
-    fetch('https://dummyjson.com/products/1')
+  let pageNumber = 2;
+
+  useEffect(() => {
+    const months = ["JANUAR", "FEBRUAR", "MÄRZ", "APRIL", "MAI", "JUNI", "JULI", "AUGUST", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DEZEMBER"];
+
+    fetch('https://ical2web.czz.ch:10111/events/Gottesdienst?pageNumber=1&pageSize=5')
     .then(res => res.json())
     .then(data => {
       console.log(data)
+  
+      let eventCounter = 1;
+      const monthsEvents = [];
+  
+      for (let i = 0; i < 5; i++) {
+        var d = new Date(0);
+        d.setUTCSeconds(data.entity[0].startEpochMillis / 1000);
+        monthsEvents.push(months[d.getMonth()]);
+      }
+  
+      let uniqueMonths = [...new Set(monthsEvents)];
+      console.log(monthsEvents)
+      console.log(uniqueMonths)
+  
+      for (let i = 0; i < uniqueMonths.length; i++) {
+        const monthContainer = document.createElement("div");
+        monthContainer.className = "month-container";
+        monthContainer.id = uniqueMonths[i];
+  
+        const monthTitle = document.createElement("div");
+        monthTitle.className = "month-title";
+        monthTitle.textContent = uniqueMonths[i];
+        monthTitle.id = uniqueMonths[i] + "-T";
+        monthContainer.appendChild(monthTitle);
+  
+        for (let j = 0; j < 5; j++) {
+          if (uniqueMonths[i] === monthsEvents[j]) {
+            const eventContainer = document.createElement("div");
+            eventContainer.className = "event-container";
+            eventContainer.id = "event" + eventCounter;
+            eventCounter = eventCounter + 1;
+  
+              const image = document.createElement("img");
+              image.className = "image";
+              image.src = Praise;
+              eventContainer.appendChild(image);
+  
+              const infoBox = document.createElement("div");
+              infoBox.className = "info-box";
+              infoBox.textContent = data.entity[j].title;
+              eventContainer.appendChild(infoBox);
+  
+            monthContainer.appendChild(eventContainer);
+          }
+        }
+  
+        document.getElementById("ecn").appendChild(monthContainer);
+      }
+    })
+  }, []);
 
-      // TODO: get the data from: https://ical2web.czz.ch/events/Gottesdienst?pageNumber=1&pageSize=5
-      //       create a for loop that dynamically generates the events overview, something like:
-      //       for each event:
-      //          if month is already there, add event there.
-      //          if not, create new month and add it there.
+  const handleClick = async () => {
+
+    fetch('https://ical2web.czz.ch/events/Gottesdienst?pageNumber=' + pageNumber + '&pageSize=5')
+    .then(res => res.json())
+    .then(data => {
+      console.log(data)
 
       const monthContainer = document.createElement("div");
       monthContainer.className = "month-container";
 
         const monthTitle = document.createElement("div");
         monthTitle.className = "month-title";
-        monthTitle.textContent = data.title;
+        monthTitle.textContent = "data.title";
 
         const eventContainer1 = document.createElement("div");
         eventContainer1.className = "event-container";
         
           const image1 = document.createElement("img");
           image1.className = "image";
-          image1.src = data.images[2];
+          image1.src = "data.images[2]";
           eventContainer1.appendChild(image1);
 
           const infoBox1 = document.createElement("div");
           infoBox1.className = "info-box";
-          infoBox1.textContent = data.description + " Price: " + data.price;
+          infoBox1.textContent = "data.description";
           eventContainer1.appendChild(infoBox1);
-
-
-
 
 
       monthContainer.appendChild(monthTitle);
       monthContainer.appendChild(eventContainer1);
-      document.getElementById("1").appendChild(monthContainer);
+      document.getElementById("ecn").appendChild(monthContainer);
+
+      pageNumber = pageNumber + 1;
     })
   }
 
   return (
     <div className="App">
       <div className="events-container-wide">
-        <div id="1" className="events-container-narrow">
+        <div id="ecn" className="events-container-narrow">
           <div className="title">
             Events
           </div>
-          <div className="month-container">
+          <div className="white-gradient"/>
+          <button className="more-button" onClick={handleClick}>Mehr</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+
+/*
+
+
+
+
+
+<div className="month-container">
             <div className="month-title">
               OKTOBER
             </div>
@@ -74,17 +145,12 @@ function App() {
               </div>
             </div>
           </div>
-          <div className="white-gradient"/>
-          <button className="more-button" onClick={handleClick}>Mehr</button>
-        </div>
-      </div>
-    </div>
-  );
-}
 
-export default App;
 
-/*
+
+
+
+
 <script>
   fetch('https://dummyjson.com/products/1')
     .then(res => res.json())
