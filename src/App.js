@@ -3,20 +3,151 @@ import React, { useEffect } from 'react';
 import Praise from './praise.jpg';
 
 function App() {
-  let pageNumber = 2;
-
   useEffect(() => {
-    const months = ["JANUAR", "FEBRUAR", "MÄRZ", "APRIL", "MAI", "JUNI", "JULI", "AUGUST", "SEPTEMBER", "OKTOBER", "NOVEMBER", "DEZEMBER"];
+    const PAGESIZE = 25;
+    const MONTHS = ["JAN", "FEB", "MÄR", "APR", "JUN", "JUL", "AUG", "SEP", "NOV", "DEZ"];
 
-    fetch('https://ical2web.czz.ch:10111/events/Gottesdienst?pageNumber=1&pageSize=5')
+    //fetch('https://ical2web.czz.ch:10111/events/Gottesdienst?pageNumber=1&pageSize=' + PAGESIZE)
+    fetch('https://dummyjson.com/products/1')
     .then(res => res.json())
     .then(data => {
       console.log(data)
   
-      let eventCounter = 1;
-      const monthsEvents = [];
-  
-      for (let i = 0; i < 5; i++) {
+      // Divs that are used exactly once
+      let app = document.createElement("div");
+      app.className = "App";
+      app.id = "App";
+
+        let eventsContainerWide = document.createElement("div");
+        eventsContainerWide.className = "events-container-wide";
+        eventsContainerWide.id = "ecw";
+
+          let eventsContainerNarrow = document.createElement("div");
+          eventsContainerNarrow.className = "events-container-narrow";
+          eventsContainerNarrow.id = "ecn";
+
+            let title = document.createElement("div");
+            title.className = "title";
+            title.innerHTML = "Events";
+            title.id = "title";
+
+      // Procedurally create other Divs
+      // monthContainer, monthTitle, eventContainer, image, infoBox
+
+      // make a list that for each event contains the month and year in which the event occurs
+      // example: ["FEB 2023", "FEB 2023", "MÄR 2023", "MÄR 2023", "MÄR 2023"]
+      let monthTitleList = []
+      for (let i = 0; i < PAGESIZE; i++) {
+        if (i < 10) {
+          let d = new Date(0);
+          //d.setUTCSeconds(data.entity[i].startEpochMillis / 1000);
+
+          monthTitleList.push(MONTHS[d.getMonth()] + " " + d.getFullYear());
+        } else {
+          let d2 = new Date("2023-01-26");
+          //d.setUTCSeconds(data.entity[i].startEpochMillis / 1000);
+
+          monthTitleList.push(MONTHS[d2.getMonth()] + " " + d2.getFullYear());
+        }
+      }
+
+      // make a list of all months that need to be displayed
+      // example: ["FEB 2023", "MÄR 2023"]
+      let monthsToBeDisplayed = [monthTitleList[0]];
+      for (let i = 1; i < monthTitleList.length; i++) {
+        if (monthTitleList[i] !== monthTitleList[i-1]) {
+          monthsToBeDisplayed.push(monthTitleList[i])
+        }
+      }
+
+      // make a list that shows how many evets are in each of the months that need to be displayed
+      // example: [2, 3]
+      let countList = [];
+      let count = 1;
+      for (let i = 1; i < monthTitleList.length; i++) {
+        if (monthTitleList[i] === monthTitleList[i-1]) {
+          count = count + 1;
+        } else {
+          countList.push(count);
+          count = 1;
+        }
+      }
+      countList.push(count);
+
+      // create the months
+      let monthContainerList = []
+      for (let i = 0; i < monthsToBeDisplayed.length; i++) {
+        let monthContainer = document.createElement("div");
+        monthContainer.className = "month-container";
+        monthContainer.id = "mc" + i;
+
+        let monthTitle = document.createElement("div");
+        monthTitle.className = "month-title";
+        monthTitle.innerHTML = monthsToBeDisplayed[i]
+        monthTitle.id = "mt" + i;
+
+        monthContainer.appendChild(monthTitle);
+        monthContainerList.push(monthContainer);
+      }
+
+      // create the events
+      let eventContainerList = []
+      for (let i = 0; i < monthTitleList.length; i++) {
+        let eventContainer = document.createElement("div");
+        eventContainer.className = "event-container";
+        eventContainer.id = "ec" + i;
+
+        let image = document.createElement("img");
+        image.className = "image";
+        image.src = "https://www.alpamare.ch/wp-content/uploads/2020/01/Alpabob-jungle_1025x577-2.jpg";
+        image.id = "image" + i;
+
+        let date = document.createElement("div");
+        date.className = "date";
+        date.textContent = "12.";
+        date.id = "date" + i;
+
+        let infoBox = document.createElement("div");
+        infoBox.className = "info-box";
+        infoBox.textContent = "Info Event";
+        infoBox.id = "ib" + i;
+
+        eventContainer.appendChild(date);
+        eventContainer.appendChild(image);
+        eventContainer.appendChild(infoBox);
+        eventContainerList.push(eventContainer);
+      }
+
+      // put the events inside the months (shift pops the first element of a list)
+      for (let i = 0; i < monthContainerList.length; i++) {
+        for (let j = 0; j < countList[i]; j++) {
+          let eventContainer = eventContainerList.shift();
+          monthContainerList[i].appendChild(eventContainer);
+        }
+      }
+
+      // Once all Elements are created append them to the correct parent
+      eventsContainerNarrow.appendChild(title);
+      for (let i = 0; i < monthContainerList.length; i++) {
+        eventsContainerNarrow.appendChild(monthContainerList[i]);
+      }
+      eventsContainerWide.appendChild(eventsContainerNarrow);
+      app.appendChild(eventsContainerWide);
+
+      // insert Events Overview (app) into Website
+      document.body.appendChild(app)
+    })
+  }, []);
+
+  return (
+    <div id="root"></div>
+  );
+}
+
+export default App;
+
+/*
+for (let i = 0; i < PAGESIZE; i++) {
         var d = new Date(0);
         d.setUTCSeconds(data.entity[0].startEpochMillis / 1000);
         monthsEvents.push(months[d.getMonth()]);
@@ -60,10 +191,21 @@ function App() {
   
         document.getElementById("ecn").appendChild(monthContainer);
       }
-    })
-  }, []);
 
-  const handleClick = async () => {
+    <div className="App">
+      <div className="events-container-wide">
+        <div id="ecn" className="events-container-narrow">
+          <div className="title">
+            Events
+          </div>
+          <div id="my-div"></div>
+          <div className="white-gradient"/>
+          <button className="more-button" onClick={handleClick}>Mehr</button>
+        </div>
+      </div>
+    </div>
+
+    const handleClick = async () => {
 
     fetch('https://ical2web.czz.ch/events/Gottesdienst?pageNumber=' + pageNumber + '&pageSize=5')
     .then(res => res.json())
@@ -98,29 +240,6 @@ function App() {
       pageNumber = pageNumber + 1;
     })
   }
-
-  return (
-    <div className="App">
-      <div className="events-container-wide">
-        <div id="ecn" className="events-container-narrow">
-          <div className="title">
-            Events
-          </div>
-          <div className="white-gradient"/>
-          <button className="more-button" onClick={handleClick}>Mehr</button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-export default App;
-
-/*
-
-
-
-
 
 <div className="month-container">
             <div className="month-title">

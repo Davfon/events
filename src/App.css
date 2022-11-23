@@ -79,7 +79,8 @@
   font-weight: bold;
   width: 500px;
   height: 80px;
-  background-color: #bbbbbb;
+  background-color: #000000;
+  color: #ffffff;
 }
 
 .month-container {
@@ -113,6 +114,20 @@
   object-fit: cover;
   width: 100px;
   height: 100px;
+}
+
+.date {
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 50px;
+  height: 50px;
+  z-index: 10;
+  font-size: 20px;
+  font-weight: bolder;
+  background-color: #000000;
+  color: #ffffff;
 }
 
 .info-box {
