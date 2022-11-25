@@ -130,11 +130,18 @@ function App() {
       gradient.className = "white-gradient";
       gradient.id = "wg"
 
-      let button = document.createElement("div");
-      button.className = "more-button";
-      button.textContent = "Mehr";
-      button.id = "btn";
-      button.onclick = function() {document.getElementById("ecn").style.height = "auto"; document.getElementById("btn").remove(); document.getElementById("wg").remove();};
+      let moreButton = document.createElement("div");
+      moreButton.className = "more-button";
+      moreButton.textContent = "Mehr";
+      moreButton.id = "more-btn";
+
+      let lessButton = document.createElement("div");
+      lessButton.className = "more-button";
+      lessButton.textContent = "Weniger";
+      lessButton.id = "less-btn";
+
+      moreButton.onclick = function() {document.getElementById("ecn").style.height = "auto"; document.getElementById("more-btn").remove(); document.getElementById("ecn").appendChild(lessButton);};
+      lessButton.onclick = function() {document.getElementById("ecn").style.height = "700px"; document.getElementById("less-btn").remove(); document.getElementById("ecn").appendChild(moreButton);};
 
       // Once all Elements are created append them to the correct parent
       eventsContainerNarrow.appendChild(title);
@@ -142,7 +149,7 @@ function App() {
         eventsContainerNarrow.appendChild(monthContainerList[i]);
       }
       eventsContainerNarrow.appendChild(gradient);
-      eventsContainerNarrow.appendChild(button);
+      eventsContainerNarrow.appendChild(moreButton);
       eventsContainerWide.appendChild(eventsContainerNarrow);
       app.appendChild(eventsContainerWide);
 
