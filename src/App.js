@@ -4,7 +4,7 @@ import Praise from './praise.jpg';
 
 function App() {
   useEffect(() => {
-    const PAGESIZE = 25;
+    const PAGESIZE = 10;
     const MONTHS = ["JAN", "FEB", "MÄR", "APR", "JUN", "JUL", "AUG", "SEP", "NOV", "DEZ"];
 
     //fetch('https://ical2web.czz.ch:10111/events/Gottesdienst?pageNumber=1&pageSize=' + PAGESIZE)
@@ -28,7 +28,7 @@ function App() {
 
             let title = document.createElement("div");
             title.className = "title";
-            title.innerHTML = "Events";
+            title.textContent = "Events";
             title.id = "title";
 
       // Procedurally create other Divs
@@ -38,7 +38,7 @@ function App() {
       // example: ["FEB 2023", "FEB 2023", "MÄR 2023", "MÄR 2023", "MÄR 2023"]
       let monthTitleList = []
       for (let i = 0; i < PAGESIZE; i++) {
-        if (i < 10) {
+        if (i < 2) {
           let d = new Date(0);
           //d.setUTCSeconds(data.entity[i].startEpochMillis / 1000);
 
@@ -126,11 +126,23 @@ function App() {
         }
       }
 
+      let gradient = document.createElement("div");
+      gradient.className = "white-gradient";
+      gradient.id = "wg"
+
+      let button = document.createElement("div");
+      button.className = "more-button";
+      button.textContent = "Mehr";
+      button.id = "btn";
+      button.onclick = function() {document.getElementById("ecn").style.height = "auto"; document.getElementById("btn").remove(); document.getElementById("wg").remove();};
+
       // Once all Elements are created append them to the correct parent
       eventsContainerNarrow.appendChild(title);
       for (let i = 0; i < monthContainerList.length; i++) {
         eventsContainerNarrow.appendChild(monthContainerList[i]);
       }
+      eventsContainerNarrow.appendChild(gradient);
+      eventsContainerNarrow.appendChild(button);
       eventsContainerWide.appendChild(eventsContainerNarrow);
       app.appendChild(eventsContainerWide);
 
