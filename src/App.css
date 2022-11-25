@@ -141,6 +141,7 @@ body {
   padding: 10px;
   font-size: 14px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2) inset;
+  white-space: pre-wrap;
 }
 
 .more-button {

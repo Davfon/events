@@ -109,7 +109,7 @@ function App() {
 
         let infoBox = document.createElement("div");
         infoBox.className = "info-box";
-        infoBox.textContent = "Info Event";
+        infoBox.textContent = "Alpamare - Wasserplausch\nStart: 18:00Uhr\nEnde: 09:00";
         infoBox.id = "ib" + i;
 
         eventContainer.appendChild(date);
