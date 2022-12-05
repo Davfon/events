@@ -18,10 +18,6 @@ function App() {
       app.className = "App";
       app.id = "App";
 
-        let eventsContainerWide = document.createElement("div");
-        eventsContainerWide.className = "events-container-wide";
-        eventsContainerWide.id = "ecw";
-
           let eventsContainerNarrow = document.createElement("div");
           eventsContainerNarrow.className = "events-container-narrow";
           eventsContainerNarrow.id = "ecn";
@@ -96,6 +92,18 @@ function App() {
         let eventContainer = document.createElement("div");
         eventContainer.className = "event-container";
         eventContainer.id = "ec" + i;
+        eventContainer.onclick = function(){
+          if (document.getElementById("ec" + i).className == "event-container") {
+            document.getElementById("ec" + i).className = "event-container-large";
+            document.getElementById("ib" + i).className = "info-box-large";
+            document.getElementById("ib" + i).textContent = document.getElementById("ib" + i).textContent + "\n\n" + document.getElementById("ht" + i).textContent;
+          } else {
+            document.getElementById("ec" + i).className = "event-container";
+            document.getElementById("ib" + i).className = "info-box";
+            let text = document.getElementById("ib" + i).textContent;
+            document.getElementById("ib" + i).textContent = text.slice(0, text.indexOf('\n\n'));
+          }
+        };
 
         let image = document.createElement("img");
         image.className = "image";
@@ -109,9 +117,15 @@ function App() {
 
         let infoBox = document.createElement("div");
         infoBox.className = "info-box";
-        infoBox.textContent = "Alpamare - Wasserplausch\nStart: 18:00Uhr\nEnde: 09:00";
+        infoBox.textContent = "Alpamare - Wasserplausch\nStart: 18:00Uhr\nEnde: 09:00Uhr";
         infoBox.id = "ib" + i;
 
+        let hiddenText = document.createElement("div");
+        hiddenText.className = "hiddenText";
+        hiddenText.textContent = "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.";
+        hiddenText.id = "ht" + i;
+
+        infoBox.appendChild(hiddenText);
         eventContainer.appendChild(date);
         eventContainer.appendChild(image);
         eventContainer.appendChild(infoBox);
@@ -150,8 +164,7 @@ function App() {
       }
       eventsContainerNarrow.appendChild(gradient);
       eventsContainerNarrow.appendChild(moreButton);
-      eventsContainerWide.appendChild(eventsContainerNarrow);
-      app.appendChild(eventsContainerWide);
+      app.appendChild(eventsContainerNarrow);
 
       // insert Events Overview (app) into Website
       document.body.appendChild(app)
