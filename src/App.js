@@ -4,13 +4,14 @@ import Praise from './praise.jpg';
 
 function App() {
   useEffect(() => {
-    const PAGESIZE = 10;
-    const MONTHS = ["JAN", "FEB", "MÄR", "APR", "JUN", "JUL", "AUG", "SEP", "NOV", "DEZ"];
+    let PAGESIZE = 10;
+    const MONTHS = ["Jan", "Feb", "Mär", "Apr", "Jun", "Jul", "Aug", "Sep", "Nov", "Dez"];
 
     //fetch('https://ical2web.czz.ch:10111/events/Gottesdienst?pageNumber=1&pageSize=' + PAGESIZE)
-    fetch('https://dummyjson.com/products/1')
+    fetch('https://ical2web.czz.ch/events/Royal%20Rangers?pageNumber=1&pageSize=' + PAGESIZE)
     .then(res => res.json())
     .then(data => {
+      PAGESIZE = data.entity.length;
       console.log(data)
   
       // Divs that are used exactly once
@@ -38,17 +39,10 @@ function App() {
       // example: ["FEB 2023", "FEB 2023", "MÄR 2023", "MÄR 2023", "MÄR 2023"]
       let monthTitleList = []
       for (let i = 0; i < PAGESIZE; i++) {
-        if (i < 2) {
-          let d = new Date(0);
-          //d.setUTCSeconds(data.entity[i].startEpochMillis / 1000);
+        let d = new Date(0);
+        d.setUTCSeconds(data.entity[i].startEpochMillis / 1000);
 
-          monthTitleList.push(MONTHS[d.getMonth()] + " " + d.getFullYear());
-        } else {
-          let d2 = new Date("2023-01-26");
-          //d.setUTCSeconds(data.entity[i].startEpochMillis / 1000);
-
-          monthTitleList.push(MONTHS[d2.getMonth()] + " " + d2.getFullYear());
-        }
+        monthTitleList.push(MONTHS[d.getMonth()] + " " + d.getFullYear());
       }
 
       // make a list of all months that need to be displayed
@@ -60,7 +54,7 @@ function App() {
         }
       }
 
-      // make a list that shows how many evets are in each of the months that need to be displayed
+      // make a list that shows how many events are in each of the months that need to be displayed
       // example: [2, 3]
       let countList = [];
       let count = 1;
@@ -97,23 +91,47 @@ function App() {
         eventContainer.className = "event-container";
         eventContainer.id = "ec" + i;
 
+        let imageDateContainer = document.createElement("div");
+        imageDateContainer.className = "image-date-container";
+        imageDateContainer.id = "idc" + i;
+
         let image = document.createElement("img");
         image.className = "image";
-        image.src = "https://www.alpamare.ch/wp-content/uploads/2020/01/Alpabob-jungle_1025x577-2.jpg";
+        if (data.entity[i].image) {
+          image.src = data.entity[i].image;
+        } else {
+          image.src = "https://github.com/koehlersimon/fallback/blob/master/Resources/Public/Images/placeholder.jpg?raw=true"
+        }
+        image.alt = "image could not load";
         image.id = "image" + i;
 
         let date = document.createElement("div");
         date.className = "date";
-        date.textContent = "12.";
+        const startdate = new Date(data.entity[i].startEpochMillis);
+        const enddate = new Date(data.entity[i].endEpochMillis);
+        const dateText = String(startdate.getDate()) + ". " + MONTHS[startdate.getMonth()];
+        date.textContent = dateText;
         date.id = "date" + i;
 
         let infoBox = document.createElement("div");
         infoBox.className = "info-box";
-        infoBox.textContent = "Alpamare - Wasserplausch\nStart: 18:00Uhr\nEnde: 09:00";
+        const startHour = String(startdate.getHours());
+        let startMinute = String(startdate.getMinutes());
+        const endHour = String(enddate.getHours());
+        let endMinute = String(enddate.getMinutes());
+        if (startMinute == 0) {
+          startMinute = "00";
+        }
+        if (endMinute == 0) {
+          endMinute = "00";
+        }
+        infoBox.textContent = data.entity[i].title + "\nStart: " + startHour + ":" + startMinute + " Uhr\nEnde: " + endHour + ":" + endMinute + " Uhr";
         infoBox.id = "ib" + i;
 
-        eventContainer.appendChild(date);
-        eventContainer.appendChild(image);
+
+        imageDateContainer.appendChild(date);
+        imageDateContainer.appendChild(image);
+        eventContainer.appendChild(imageDateContainer);
         eventContainer.appendChild(infoBox);
         eventContainerList.push(eventContainer);
       }
